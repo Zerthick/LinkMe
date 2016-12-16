@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
         id = "linkme",
         name = "LinkMe",
         description = "A simple Minecraft command link plugin",
-        version = "1.0.1",
+        version = "1.0.0",
         authors = {
                 "Zerthick"
         }
