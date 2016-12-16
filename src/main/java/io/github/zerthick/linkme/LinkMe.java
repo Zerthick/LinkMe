@@ -98,7 +98,7 @@ public class LinkMe {
         Map<String, String> messageMap = new HashMap<>();
 
         try {
-            messageMap.putAll(configLoader.load().getNode("messages").getValue(new TypeToken<Map<String, String>>() {
+            messageMap.putAll(configLoader.load().getNode("links").getValue(new TypeToken<Map<String, String>>() {
             }));
         } catch (ObjectMappingException | IOException e) {
             logger.warn("Error loading config! Error: " + e.getMessage());
