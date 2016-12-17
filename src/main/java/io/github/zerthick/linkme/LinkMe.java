@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
         id = "linkme",
         name = "LinkMe",
         description = "A simple Minecraft command link plugin",
-        version = "1.0.0",
+        version = "1.1.0",
         authors = {
                 "Zerthick"
         }
@@ -95,11 +95,17 @@ public class LinkMe {
         }
 
         //Load messages
-        Map<String, String> messageMap = new HashMap<>();
+        Map<String, Text> messageMap = new HashMap<>();
 
         try {
-            messageMap.putAll(configLoader.load().getNode("links").getValue(new TypeToken<Map<String, String>>() {
-            }));
+            CommentedConfigurationNode linksNode = configLoader.load().getNode("links");
+            for (CommentedConfigurationNode node : linksNode.getChildrenMap().values()) {
+                if (node.getString().startsWith("{")) {
+                    messageMap.put(node.getKey().toString(), node.getValue(TypeToken.of(Text.class)));
+                } else {
+                    messageMap.put(node.getKey().toString(), processLinks(TextSerializers.FORMATTING_CODE.deserialize(node.getString())));
+                }
+            }
         } catch (ObjectMappingException | IOException e) {
             logger.warn("Error loading config! Error: " + e.getMessage());
         }
@@ -109,7 +115,7 @@ public class LinkMe {
         //Register each link command
         messageMap.entrySet().forEach(e -> commandManager.register(this, CommandSpec.builder()
                         .executor((src, args) -> {
-                            src.sendMessage(processLinks(TextSerializers.FORMATTING_CODE.deserialize(e.getValue())));
+                            src.sendMessage(e.getValue());
                             return CommandResult.success();
                         })
                         .permission("linkme.commands." + e.getKey().toLowerCase()).build(),
