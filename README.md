@@ -18,3 +18,20 @@ The format of links are `<Link Name> = <Link Message>`
 
 To use a link, players will simply execute `/<Link Name>` in chat and they will recieve the link message.  
 **Important:** All link commands will be assigned a permission node with the value `linkme.commands.<lowercase link name>` where `<lowercase link name>` is the name of the link **in all lowercase letters**! This will allow you to control which links are available to each player.
+
+##Advanced Mode - HOCON Links
+For those of you with configuration ninja skills links can also be specified in [HOCON Configuration Format](https://docs.spongepowered.org/master/en/plugin/text/representations/configurate.html). For example:
+    
+    links {
+      HoconLinkExample {
+        clickEvent {
+          action = "open_url"
+          value = "https://www.spongepowered.org"
+        }
+        color = yellow
+        text = Sponge
+        underlined = true
+      }
+    }
+
+This would create a link with the name `HoconLinkExample` which would display *Sponge* underlined, in yellow, and would link to the Sponge homepage.
