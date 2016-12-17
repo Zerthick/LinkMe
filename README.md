@@ -8,9 +8,9 @@ The general permise behind LinkMe is simple, when running a server you often tim
 Edit the `linkme.conf` file located at `~/config/linkme.conf` it should look something like the following:
 
     links {
-        Hello = "Hello World!"
-        Link = "https://www.spongepowered.org"
-        Formatted = "&9I'm Blue"
+      Hello = "Hello World!"
+      Link = "https://www.spongepowered.org"
+      Formatted = "&9I'm Blue"
     }
   
 The format of links are `<Link Name> = <Link Message>`    
