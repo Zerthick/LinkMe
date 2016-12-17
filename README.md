@@ -2,7 +2,7 @@
 A simple Minecraft Sponge link-sharing Plugin
 
 ##The Idea
-The general permise behind LinkMe is simple, when running a server you often times have links you want to share with your players (website, forums, ect.) however there may be too many to embed in the motd, so you'll inevitably have players asking "What is the link to ***x*** resource?" That's where LinkMe steps in! LinkMe will allow you to create commands, `/forum` for exampe, that will send them a link to the appropriate site.  LinkMe can also be used to send simple messages to the player as well such as rules, help messages, ect.
+The general permise behind LinkMe is simple, when running a server you often times have links you want to share with your players (website, forums, ect.) however there may be too many to embed in the motd, so you'll inevitably have players asking "What is the link to ***x*** resource?" That's where LinkMe steps in! LinkMe will allow you to create commands, `/forum` for example, that will send them a link to the appropriate site.  LinkMe can also be used to send simple messages to the player as well such as rules, help messages, ect.
 
 ## Creating Links
 Edit the `linkme.conf` file located at `~/config/linkme.conf` it should look something like the following:
