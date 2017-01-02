@@ -1,4 +1,4 @@
-#LinkMe - Share Links & Info with Players via simple Commands! [![Github All Releases](https://img.shields.io/github/downloads/zerthick/LinkMe/total.svg)](https://github.com/Zerthick/LinkMe/releases) [![GitHub issues](https://img.shields.io/github/issues/zerthick/LinkMe.svg)](https://github.com/Zerthick/LinkMe/issues) [![license](https://img.shields.io/github/license/zerthick/LinkMe.svg)](https://github.com/Zerthick/LinkMe/blob/master/LICENSE.txt)
+#LinkMe - Share Links & Info with Players via simple Commands!
 
 ##The Idea
 The general premise behind LinkMe is simple: when running a server, you often have links you want to share with your players (website, forums, etc.). However, there may be too many to embed in the motd, so you'll inevitably have players asking "What is the link to ***x*** resource?" That's where LinkMe steps in! LinkMe will allow you to create commands, `/forum` for example, that will send them a link to the appropriate site.  LinkMe can also be used to send simple messages to the player, such as rules, help messages, etc.
