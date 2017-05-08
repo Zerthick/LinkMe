@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016  Zerthick
+ * Copyright (C) 2017  Zerthick
  *
  * This file is part of LinkMe.
  *
@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
         id = "linkme",
         name = "LinkMe",
         description = "A simple Minecraft command link plugin",
-        version = "1.1.0",
+        version = "1.2.0",
         authors = {
                 "Zerthick"
         }
