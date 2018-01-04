@@ -55,7 +55,6 @@ import java.util.regex.Pattern;
         id = "linkme",
         name = "LinkMe",
         description = "A simple Minecraft command link plugin",
-        version = "1.2.0",
         authors = {
                 "Zerthick"
         }
@@ -113,13 +112,13 @@ public class LinkMe {
         CommandManager commandManager = Sponge.getCommandManager();
 
         //Register each link command
-        messageMap.entrySet().forEach(e -> commandManager.register(this, CommandSpec.builder()
+        messageMap.forEach((key, value) -> commandManager.register(this, CommandSpec.builder()
                         .executor((src, args) -> {
-                            src.sendMessage(e.getValue());
+                            src.sendMessage(value);
                             return CommandResult.success();
                         })
-                        .permission("linkme.commands." + e.getKey().toLowerCase()).build(),
-                ImmutableList.of(e.getKey().toLowerCase())));
+                        .permission("linkme.commands." + key.toLowerCase()).build(),
+                ImmutableList.of(key.toLowerCase())));
     }
 
     @Listener
