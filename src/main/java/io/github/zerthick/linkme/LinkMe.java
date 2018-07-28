@@ -29,11 +29,12 @@ import ninja.leaping.configurate.objectmapping.ObjectMappingException;
 import org.slf4j.Logger;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.asset.Asset;
-import org.spongepowered.api.command.CommandManager;
+import org.spongepowered.api.command.CommandMapping;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.DefaultConfig;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.game.GameReloadEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStartedServerEvent;
 import org.spongepowered.api.plugin.Plugin;
@@ -46,8 +47,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,6 +69,8 @@ public class LinkMe {
     @Inject
     @DefaultConfig(sharedRoot = true)
     private Path defaultConfig;
+
+    private Collection<CommandMapping> registeredCommands;
 
     public Logger getLogger() {
         return logger;
@@ -94,6 +96,48 @@ public class LinkMe {
         }
 
         //Load messages
+        Map<String, Text> messageMap = loadMessages(configLoader);
+
+        //Register each link command
+        registeredCommands = registerCommands(messageMap);
+    }
+
+    @Listener
+    public void onServerStart(GameStartedServerEvent event) {
+        getLogger().info(
+                instance.getName() + " version " + instance.getVersion().orElse("")
+                        + " enabled!");
+    }
+
+    @Listener
+    public void onGameReload(GameReloadEvent event) {
+        ConfigurationLoader<CommentedConfigurationNode> configLoader = HoconConfigurationLoader.builder().setPath(defaultConfig).build();
+
+        //Load messages
+        Map<String, Text> messageMap = loadMessages(configLoader);
+
+        //Unregister old commands
+        unregisterCommands(registeredCommands);
+
+        //Register new commands
+        registerCommands(messageMap);
+    }
+
+    //Search message for a link, add click action if one is discovered
+    private Text processLinks(Text msg) {
+        Matcher matcher = urlPattern.matcher(msg.toPlain());
+        if (matcher.find()) {
+            try {
+                return Text.builder().append(msg).onClick(TextActions.openUrl(new URL(matcher.group()))).build();
+            } catch (MalformedURLException e) {
+                logger.warn("Error parsing url. Url: " + matcher.group() + " Error: " + e.getMessage());
+            }
+        }
+        return msg;
+    }
+
+    private Map<String, Text> loadMessages(ConfigurationLoader<CommentedConfigurationNode> configLoader) {
+        //Load messages
         Map<String, Text> messageMap = new HashMap<>();
 
         try {
@@ -109,35 +153,30 @@ public class LinkMe {
             logger.warn("Error loading config! Error: " + e.getMessage());
         }
 
-        CommandManager commandManager = Sponge.getCommandManager();
-
-        //Register each link command
-        messageMap.forEach((key, value) -> commandManager.register(this, CommandSpec.builder()
-                        .executor((src, args) -> {
-                            src.sendMessage(value);
-                            return CommandResult.success();
-                        })
-                        .permission("linkme.commands." + key.toLowerCase()).build(),
-                ImmutableList.of(key.toLowerCase())));
+        return messageMap;
     }
 
-    @Listener
-    public void onServerStart(GameStartedServerEvent event) {
-        getLogger().info(
-                instance.getName() + " version " + instance.getVersion().orElse("")
-                        + " enabled!");
+    private Collection<CommandMapping> registerCommands(Map<String, Text> messageMap) {
+
+        List<CommandMapping> registeredCommands = new ArrayList<>();
+
+        messageMap.forEach((key, value) -> {
+            CommandSpec spec = CommandSpec.builder()
+                    .executor(((src, args) -> {
+                        src.sendMessage(value);
+                        return CommandResult.success();
+                    }))
+                    .permission("linkme.commands." + key.toLowerCase()).build();
+
+            Sponge.getCommandManager().register(this, spec, ImmutableList.of(key.toLowerCase()))
+                    .ifPresent(registeredCommands::add);
+
+        });
+
+        return registeredCommands;
     }
 
-    //Search message for a link, add click action if one is discovered
-    private Text processLinks(Text msg) {
-        Matcher matcher = urlPattern.matcher(msg.toPlain());
-        if (matcher.find()) {
-            try {
-                return Text.builder().append(msg).onClick(TextActions.openUrl(new URL(matcher.group()))).build();
-            } catch (MalformedURLException e) {
-                logger.warn("Error parsing url. Url: " + matcher.group() + " Error: " + e.getMessage());
-            }
-        }
-        return msg;
+    private void unregisterCommands(Collection<CommandMapping> commands) {
+        commands.forEach(command -> Sponge.getCommandManager().removeMapping(command));
     }
 }
